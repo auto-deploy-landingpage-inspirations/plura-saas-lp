@@ -202,11 +202,11 @@ export const deleteAgency = async (agencyId: string) => {
 
 export const initUser = async (newUser: Partial<User>) => {
   const user = await currentUser();
-  if(!user) return;
+  if (!user) return;
 
   const userData = await db.user.upsert({
     where: {
-      email: user.emailAddresses[0].emailAddress, 
+      email: user.emailAddresses[0].emailAddress,
     },
     update: newUser,
     create: {
@@ -229,9 +229,9 @@ export const initUser = async (newUser: Partial<User>) => {
 
 
 export const upsertAgency = async (agency: Agency, price?: Plan) => {
-  if(!agency.companyEmail) return null;
+  if (!agency.companyEmail) return null;
 
-  try{
+  try {
     const agencyDetails = await db.agency.upsert({
       where: {
         id: agency.id,
@@ -281,7 +281,25 @@ export const upsertAgency = async (agency: Agency, price?: Plan) => {
 
     return agencyDetails;
 
-  } catch(error) {
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const getNotificationAndUser = async (agencyId: string) => {
+  try {
+    const notifications = await db.notification.findMany({
+      where: { agencyId },
+      include: {
+        User: true,
+      },
+      orderBy: {
+        createdAt: "desc"
+      },
+    });
+
+    return notifications;
+  } catch (error) {
     console.log(error);
   }
 }
