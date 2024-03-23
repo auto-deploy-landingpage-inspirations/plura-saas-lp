@@ -1,5 +1,5 @@
 'use client';
-import { AgencySidebarOption, SubAccount, SubAccountSidebarOption } from "@prisma/client"
+import { Agency, AgencySidebarOption, SubAccount, SubAccountSidebarOption } from "@prisma/client"
 import { useEffect, useMemo, useState } from "react"
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Button } from "../ui/button";
@@ -10,6 +10,9 @@ import Image from "next/image";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command";
 import Link from "next/link";
+import { useModal } from "@/providers/modal-provider";
+import CustomModal from "../global/custom-modal";
+import SubAccountDetails from "../forms/subaccount-details";
 
 type Props = {
   defaultOpen?: boolean,
@@ -28,6 +31,8 @@ export default function MenuOptions({
   details,
   user,
   id }: Props) {
+
+  const { setOpen } = useModal();
 
   const [isMounted, setIsMounted] = useState(false);
   const openState = useMemo(
@@ -175,10 +180,26 @@ export default function MenuOptions({
                     </CommandGroup>
                   </CommandList>
                   {(user?.role === "AGENCY_OWNER" || user?.role === "AGENCY_ADMIN") && (
-                    <Button className="w-full flex gap-2">
-                      <PlusCircleIcon size={15} />
-                      Create Sub Account
-                    </Button>
+                    <SheetClose>
+                      <Button
+                        className="w-full flex gap-2"
+                        onClick={() => {
+                          setOpen(<CustomModal
+                            title="Create a subaccount"
+                            subheading="You can switch between your agency account and subaccount from the sidebar"
+                          >
+                            <SubAccountDetails
+                              agencyDetails={user?.Agency as Agency}
+                              userId={user?.id as string}
+                              userName={user?.username as string}
+                            />
+                          </CustomModal>)
+                        }}
+                      >
+                        <PlusCircleIcon size={15} />
+                        Create Sub Account
+                      </Button>
+                    </SheetClose>
                   )}
                 </Command>
               </PopoverContent>
