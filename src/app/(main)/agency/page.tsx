@@ -1,4 +1,4 @@
-import AgencyDetails from "@/components/forms/AgencyDetails";
+import AgencyDetails from "@/components/forms/agency-details";
 import { getAuthUserDetails, verifyAndAcceptInvitation } from "@/lib/queries";
 import { currentUser } from "@clerk/nextjs";
 import { Plan } from "@prisma/client";
