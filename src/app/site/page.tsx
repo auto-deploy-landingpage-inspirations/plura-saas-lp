@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <>
-      <section className="h-full w-full mt-4 md:pt-44 relative flex flex-col items-center justify-center">
+      <section className="relative h-full w-full mt-4 md:mt-20 2xl:mt-6 md:pt-44 flex flex-col items-center justify-center">
         <div className="absolute bottom-0 left-0 right-0 top-0 bg-[linear-gradient(to_right,#161616_1px,transparent_1px),linear-gradient(to_bottom,#161616_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]
         dark:bg-[linear-gradient(to_right,#666666_1px,transparent_1px),linear-gradient(to_bottom,#666666_1px,transparent_1px)]" />
         <p className="text-center">Run your agency in one place.</p>
@@ -27,7 +27,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="flex justify-center items-center flex-col gap-4 md:!mt-20 mt-[-60px]">
+      <section className="flex justify-center items-center flex-col gap-4 mt-[-60px] md:!mt-60 2xl:!mt-32 pb-32">
         <h2 className="text-4xl text-center">Choose what fits you right.</h2>
         <p className="text-muted-foreground text-center">
           Our straight forward pricing plans are tailored to meet your needs. If
@@ -50,15 +50,15 @@ export default function Home() {
               </CardContent>
               <CardFooter className="flex flex-col items-start gap-4">
                 <div>{card.features.map((feature) => (
-                <div key={feature} className="flex gap-2 items-center">
-                  <Check className="text-muted-foreground" />
-                  <p>{feature}</p>
-                </div>
-                ))}</div> 
+                  <div key={feature} className="flex gap-2 items-center">
+                    <Check className="text-muted-foreground" />
+                    <p>{feature}</p>
+                  </div>
+                ))}</div>
                 <Link href={`/agency?plan=${card.priceId}`} className={clsx("w-full text-center bg-primary p-2 rounded-md",
-                {"!bg-muted": card.title !== "Unlimited Saas"})}>
-                  Get Started 
-                  </Link>
+                  { "!bg-muted": card.title !== "Unlimited Saas" })}>
+                  Get Started
+                </Link>
               </CardFooter>
             </Card>
           ))}

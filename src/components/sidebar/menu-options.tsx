@@ -114,7 +114,7 @@ export default function MenuOptions({
                                   className="rounded-md object-contain"
                                 />
                               </div>
-                              <div className="flex flex-col font-medium">
+                              <div className="flex flex-col text-primary font-medium">
                                 {user?.Agency?.name}
                                 <span className="text-muted-foreground font-normal">{user?.Agency?.address}</span>
                               </div>
