@@ -1,9 +1,11 @@
-import Sidebar from "@/components/sidebar";
-import Unauthorized from "@/components/unauthorized";
-import { getNotificationAndUser, verifyAndAcceptInvitation } from "@/lib/queries";
+import { ReactNode } from "react";
 import { currentUser } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
-import { ReactNode } from "react";
+import Sidebar from "@/components/sidebar";
+import BlurPage from "@/components/global/blur-page";
+import Unauthorized from "@/components/unauthorized";
+import { getNotificationAndUser, verifyAndAcceptInvitation } from "@/lib/queries";
+import Infobar from "@/components/global/infobar";
 
 type Props = {
   children: ReactNode,
@@ -32,7 +34,17 @@ export default async function AgencyLayout({ children, params }: Props) {
   return (
     <div className="h-screen overflow-hidden">
       <Sidebar id={params.agencyId} type="agency" />
-      <div className="md:pl-[300px]">{children}</div>
+      <div className="md:pl-[300px]">
+        <Infobar
+          notifications={allNoti}
+          role={user.privateMetadata.role}
+        />
+        <div className="relative">
+          <BlurPage>
+            {children}
+          </BlurPage>
+        </div>
+      </div>
     </div>
   )
 }
