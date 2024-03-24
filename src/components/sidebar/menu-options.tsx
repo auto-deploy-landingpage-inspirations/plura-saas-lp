@@ -52,7 +52,7 @@ export default function MenuOptions({
         modal={false}
         {...openState}
       >
-        <SheetTrigger asChild className="absolute left-4 top-4 z-[100] md:hidden flex">
+        <SheetTrigger asChild className="absolute left-4 top-4 z-[100] md:!hidden flex">
           <Button variant={"outline"} size={"icon"}>
             <Menu />
           </Button>
@@ -79,7 +79,7 @@ export default function MenuOptions({
             </AspectRatio>
             <Popover>
               <PopoverTrigger asChild>
-                <Button className="w-full flex items-center justify-between py-8" variant={'ghost'}>
+                <Button className="w-full flex items-center justify-between py-8 mt-2" variant={'ghost'}>
                   <div className="flex items-center text-left gap-2">
                     <Compass />
                     <div className="flex flex-col">
@@ -102,18 +102,19 @@ export default function MenuOptions({
                     <CommandEmpty>No results found</CommandEmpty>
                     {(user?.role === "AGENCY_OWNER" || user?.role === "AGENCY_ADMIN") && user?.Agency && (
                       <CommandGroup heading='Agency'>
-                        <CommandItem className="!bg-transparent my-2 text-primary border-[1px] border-border rounded-md hover:bg-muted cursor-pointer transition-all">
+                        <CommandItem className="!bg-transparent my-2 text-primary border-[1px] border-border rounded-md hover:!bg-muted cursor-pointer transition-all">
                           {defaultOpen ? (
                             <Link href={`/agency/${user?.Agency?.id}`} className="flex gap-4 w-full h-full">
-                              <div className="relative w-60">
+                              <div className="relative w-16">
                                 <Image
                                   loader={() => user?.Agency?.agencyLogo}
                                   src={user?.Agency?.agencyLogo}
                                   alt={'Agency Logo'}
-                                  fill className="rounded-md object-contain"
+                                  fill
+                                  className="rounded-md object-contain"
                                 />
                               </div>
-                              <div className="flex flex-col flex-1 font-medium">
+                              <div className="flex flex-col font-medium">
                                 {user?.Agency?.name}
                                 <span className="text-muted-foreground font-normal">{user?.Agency?.address}</span>
                               </div>
@@ -121,7 +122,7 @@ export default function MenuOptions({
                           ) : (
                             <SheetClose asChild>
                               <Link href={`/agency/${user?.Agency?.id}`} className="flex gap-4 w-full h-full">
-                                <div className="relative w-60">
+                                <div className="relative w-16">
                                   <Image
                                     loader={() => user?.Agency?.agencyLogo}
                                     src={user?.Agency?.agencyLogo}
@@ -145,7 +146,7 @@ export default function MenuOptions({
                           <CommandItem key={subaccount.id}>
                             {defaultOpen ? (
                               <Link href={`/subaccount/${subaccount.id}`} className="flex gap-4 w-full h-full">
-                                <div className="relative w-60">
+                                <div className="relative w-16">
                                   <Image
                                     loader={() => subaccount.subAccountLogo}
                                     src={subaccount.subAccountLogo}
@@ -161,7 +162,7 @@ export default function MenuOptions({
                             ) : (
                               <SheetClose asChild>
                                 <Link href={`/agency/${subaccount.id}`} className="flex gap-4 w-full h-full">
-                                  <div className="relative w-60">
+                                  <div className="relative w-16">
                                     <Image
                                       loader={() => subaccount.subAccountLogo}
                                       src={subaccount.subAccountLogo}
@@ -206,7 +207,7 @@ export default function MenuOptions({
                 </Command>
               </PopoverContent>
             </Popover>
-            <p className="text-muted-foreground text-xs mb-2">MENU LINKS</p>
+            <p className="text-muted-foreground text-xs mt-4 mb-2">MENU LINKS</p>
             <Separator className="mb-4" />
             <nav className="relative">
               <Command className="rounded-lg overflow-visible">
@@ -221,11 +222,11 @@ export default function MenuOptions({
                         val = <result.path />;
                       }
                       return (
-                        <CommandItem key={opt.id} className="w-full md:w-[320px]">
+                        <CommandItem key={opt.id} className="w-full">
                           <Link href={opt.link} className="flex items-center gap-2 hover:bg-transparent rounded-md transition-all md:w-full w-[320px]">
                             {val}
                             <span>{opt.name}</span>
-                          </Link> 
+                          </Link>
                         </CommandItem>
                       )
                     })}
