@@ -366,10 +366,8 @@ export default function AgencyDetails({ data }: Props) {
 
           {data?.id && (
             <div className="flex flex-row items-center justify-between rounded-lg border border-destructive gap-4 p-4 mt-4">
-              <div>
-                <div> Danger Zone </div>
-              </div>
               <div className="text-muted-foreground">
+                <div className="text-white font-semibold"> Danger Zone </div>
                 Deleting your agency cannot be undone. This will also delete all
                 sub accounts and all data related to your sub accounts. Sub
                 accounts will no longer have access to funnels, contacts etc.
