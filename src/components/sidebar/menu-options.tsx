@@ -71,7 +71,6 @@ export default function MenuOptions({
           <div>
             <AspectRatio ratio={16 / 5}>
               <Image
-                loader={() => sideBarLogo}
                 src={sideBarLogo}
                 alt="Sidebar logo"
                 fill
@@ -107,7 +106,6 @@ export default function MenuOptions({
                             <Link href={`/agency/${user?.Agency?.id}`} className="flex gap-4 w-full h-full">
                               <div className="relative w-16">
                                 <Image
-                                  loader={() => user?.Agency?.agencyLogo}
                                   src={user?.Agency?.agencyLogo}
                                   alt={'Agency Logo'}
                                   fill
@@ -124,7 +122,6 @@ export default function MenuOptions({
                               <Link href={`/agency/${user?.Agency?.id}`} className="flex gap-4 w-full h-full">
                                 <div className="relative w-16">
                                   <Image
-                                    loader={() => user?.Agency?.agencyLogo}
                                     src={user?.Agency?.agencyLogo}
                                     alt={'Agency Logo'}
                                     fill className="rounded-md object-contain"
@@ -148,7 +145,6 @@ export default function MenuOptions({
                               <Link href={`/subaccount/${subaccount.id}`} className="flex gap-4 w-full h-full">
                                 <div className="relative w-16">
                                   <Image
-                                    loader={() => subaccount.subAccountLogo}
                                     src={subaccount.subAccountLogo}
                                     alt={'Agency Logo'}
                                     fill className="rounded-md object-contain"
@@ -164,7 +160,6 @@ export default function MenuOptions({
                                 <Link href={`/agency/${subaccount.id}`} className="flex gap-4 w-full h-full">
                                   <div className="relative w-16">
                                     <Image
-                                      loader={() => subaccount.subAccountLogo}
                                       src={subaccount.subAccountLogo}
                                       alt={'Agency Logo'}
                                       fill className="rounded-md object-contain"
