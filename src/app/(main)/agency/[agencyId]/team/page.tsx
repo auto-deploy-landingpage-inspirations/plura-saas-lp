@@ -4,6 +4,7 @@ import DataTable from './data-table';
 import { PlusIcon } from 'lucide-react';
 import { currentUser } from '@clerk/nextjs';
 import { columns } from './columns';
+import SendInvitation from '@/components/forms/send-invitation';
 
 type Props = {
   params: {
@@ -45,8 +46,7 @@ const TeamPage = async ({ params }: Props) => {
           Add
         </>
       }
-
-      modalChildren={<> </>}
+      modalChildren={ <SendInvitation agencyId={agencyDetails.id} /> }
       filterValue='name'
       columns={columns}
       data={teamMembers}
