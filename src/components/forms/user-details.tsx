@@ -321,13 +321,13 @@ export default function UserDetails({ id, type, userData, subAccounts }: Props) 
                   You can give Sub Account access to team member by turning on access control to each Sub Account.
                   This is only visible to agency owners.
                 </FormDescription>
-                <div className="flex flex-cl gap-4">
+                <div className="flex flex-col gap-4">
                   {subAccounts?.map((subAccount) => {
                     const subAccountPermissionsDetails = subAccountPermissions?.Permissions.find(p => p.subAccountId === subAccount.id);
                     return (
                       <div
                         key={subAccount.id}
-                        className="flex flex-col items-center justify-between rounded-lg border p-4"
+                        className="flex items-center justify-between rounded-lg border p-4"
                       >
                         <div>
                           <p>{subAccount.name}</p>
