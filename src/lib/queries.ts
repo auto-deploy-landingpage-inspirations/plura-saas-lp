@@ -2,10 +2,11 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server"
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { Agency, Plan, Prisma, Role, SubAccount, User } from "@prisma/client";
+import { Agency, Lane, Plan, Prisma, Role, SubAccount, Ticket, User } from "@prisma/client";
 import { v4 } from "uuid";
 import { CreateFunnelFormSchema, CreateMediaType } from "./types";
 import { z } from "zod";
+import { CloudCog } from "lucide-react";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -599,4 +600,42 @@ export const upsertPipeline = async (
     create: pipeline,
   });
   return response;
+}
+
+export const deletePipeline = async (pipelineId: string) => {
+  const response = await db.pipeline.delete({
+    where: { id: pipelineId },
+  });
+  return response;
+}
+
+export const updateLanesOrder = async (lanes: Lane[]) => {
+  try {
+    const updateTransactions = lanes.map((lane) => {
+      return db.lane.update({
+        where: { id: lane.id },
+        data: { order: lane.order },
+      });
+    });
+
+    await db.$transaction(updateTransactions);
+    console.log("Reordered Lanes")
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const updateTicketsOrder = async (tickets: Ticket[]) => {
+  try {
+    const updateTransactions = tickets.map((ticket) => {
+      return db.ticket.update({
+        where: { id: ticket.id },
+        data: { order: ticket.order, laneId: ticket.laneId },
+      });
+    });
+    await db.$transaction(updateTransactions);
+    console.log("Reordered Tickets")
+  } catch (error) {
+    console.log(error);
+  }
 }
