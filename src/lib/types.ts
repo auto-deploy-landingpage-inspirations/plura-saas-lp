@@ -1,5 +1,5 @@
 import { Contact, Lane, Notification, Prisma, Role, Tag, Ticket, User } from "@prisma/client";
-import { getAuthUserDetails, getMedia, getPipelineDetails, getUserPermissions } from "./queries";
+import { getAuthUserDetails, getMedia, getPipelineDetails, getTicketWithTags, getUserPermissions } from "./queries";
 import { db } from "./db";
 import { z } from "zod";
 
@@ -70,3 +70,9 @@ export type PipelineDetailsWithLanesCardsTagsTickets = Prisma
   .PromiseReturnType<
     typeof getPipelineDetails
   >
+
+export const LaneFormSchema = z.object({
+  name: z.string().min(1),
+})
+
+export type TicketWithTags = Prisma.PromiseReturnType<typeof getTicketWithTags>; 

@@ -6,7 +6,6 @@ import { Agency, Lane, Plan, Prisma, Role, SubAccount, Ticket, User } from "@pri
 import { v4 } from "uuid";
 import { CreateFunnelFormSchema, CreateMediaType } from "./types";
 import { z } from "zod";
-import { CloudCog } from "lucide-react";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -638,4 +637,54 @@ export const updateTicketsOrder = async (tickets: Ticket[]) => {
   } catch (error) {
     console.log(error);
   }
+}
+
+export const upsertLane = async (lane: Prisma.LaneUncheckedCreateInput) => {
+  let order: number;
+
+  if (!lane.order) {
+    const lanes = await db.lane.findMany({
+      where: {
+        pipelineId: lane.pipelineId
+      },
+    });
+    order = lanes.length;
+  } else {
+    order = lane.order;
+  }
+
+  const response = await db.lane.upsert({
+    where: { id: lane.id || v4() },
+    update: lane,
+    create: {
+      ...lane,
+      order,
+    },
+  });
+
+  return response;
+}
+
+export const deleteLane = async (laneId: string) => {
+  const response = await db.lane.delete({
+    where: { id: laneId },
+  });
+  return response;
+}
+
+export const getTicketWithTags = async (pipelineId: string) => {
+  const response = await db.ticket.findMany({
+    where: {
+      Lane: {
+        pipelineId: pipelineId,
+      }
+    },
+    include: {
+      Tags: true,
+      Assigned: true,
+      Customer: true,
+    },
+  });
+
+  return response;
 }
