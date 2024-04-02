@@ -2,10 +2,12 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server"
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { Agency, Lane, Plan, Prisma, Role, SubAccount, Ticket, User } from "@prisma/client";
+import { Agency, Lane, Plan, Prisma, Role, SubAccount, Tag, Ticket, User } from "@prisma/client";
 import { v4 } from "uuid";
 import { CreateFunnelFormSchema, CreateMediaType } from "./types";
 import { z } from "zod";
+import { dir } from "console";
+import { Turret_Road } from "next/font/google";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -683,6 +685,80 @@ export const getTicketWithTags = async (pipelineId: string) => {
       Tags: true,
       Assigned: true,
       Customer: true,
+    },
+  });
+
+  return response;
+}
+
+export const _getTicketsWithAllRelations = async (laneId: string) => {
+  const response = await db.ticket.findMany({
+    where: { laneId },
+    include: {
+      Tags: true,
+      Assigned: true,
+      Lane: true,
+      Customer: true,
+    },
+  });
+
+  return response;
+}
+
+export const getSubaccountTeamMembers = async (subaccountId: string) => {
+  const response = await db.user.findMany({
+    where: {
+      Agency: {
+        SubAccount: {
+          some: { id: subaccountId },
+        },
+      },
+      role: 'SUBACCOUNT_USER',
+      Permissions: {
+        some: {
+          subAccountId: subaccountId,
+          access: true
+        },
+      },
+    }
+  });
+  return response;
+}
+
+export const searchContacts = async (search: string) => {
+  const response = await db.contact.findMany({
+    where: {
+      name: {
+        contains: search,
+      },
+    },
+  });
+  return response;
+}
+
+export const upsertTicket = async (
+  ticket: Prisma.TicketUncheckedCreateInput,
+  tags: Tag[]
+) => {
+  let order: number;
+  if (!ticket.order) {
+    const tickets = await db.ticket.findMany({
+      where: { laneId: ticket.laneId },
+    });
+    order = tickets.length;
+  } else {
+    order = ticket.order;
+  }
+
+  const response = await db.ticket.upsert({
+    where: { id: ticket.id || v4() },
+    update: { ...ticket, Tags: { set: tags } },
+    create: { ...ticket, Tags: { connect: tags }, order },
+    include: {
+      Assigned: true,
+      Customer: true,
+      Tags: true,
+      Lane: true,
     },
   });
 
