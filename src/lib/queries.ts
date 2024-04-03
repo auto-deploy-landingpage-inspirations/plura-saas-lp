@@ -6,8 +6,6 @@ import { Agency, Lane, Plan, Prisma, Role, SubAccount, Tag, Ticket, User } from 
 import { v4 } from "uuid";
 import { CreateFunnelFormSchema, CreateMediaType } from "./types";
 import { z } from "zod";
-import { dir } from "console";
-import { Turret_Road } from "next/font/google";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -762,5 +760,12 @@ export const upsertTicket = async (
     },
   });
 
+  return response;
+}
+
+export const deleteTicket = async (ticketId: string) => {
+  const response = await db.ticket.delete({
+    where: { id: ticketId },
+  });
   return response;
 }
