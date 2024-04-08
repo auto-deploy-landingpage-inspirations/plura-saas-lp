@@ -8,8 +8,9 @@ import { Lane, Ticket } from "@prisma/client";
 import { Flag, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
+import { DropResult, Droppable } from "react-beautiful-dnd";
 import PipelineLane from "./pipeline-lane";
+import { DndContext, closestCorners, useDroppable } from "@dnd-kit/core";
 
 type Props = {
   lanes: LaneDetail[];
@@ -31,6 +32,9 @@ const PipelineView: React.FC<Props> = ({
   const { setOpen } = useModal();
   const router = useRouter();
   const [allLanes, setAllLanes] = useState<LaneDetail[]>([]);
+  const { isOver, setNodeRef } = useDroppable({
+    id: 'lanes',
+  });
 
   useEffect(() => {
     setAllLanes(lanes);
@@ -130,7 +134,7 @@ const PipelineView: React.FC<Props> = ({
   }
 
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
+    <DndContext collisionDetection={closestCorners}>
       <div className="bg-white/60 dark:bg-background/60 rounded-xl p-4 use-automation-zoom-in">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl">
@@ -144,36 +148,25 @@ const PipelineView: React.FC<Props> = ({
             Create Lane
           </Button>
         </div>
-        <Droppable
-          droppableId="lanes"
-          type="lane"
-          direction="vertical"
-          key="lanes"
+        <div
+          ref={setNodeRef}
+          className="flex items-center gap-x-2 overflow-scroll"
         >
-          {(provided) => (
-            <div
-              className="flex items-center gap-x-2 overflow-scroll"
-              {...provided.droppableProps}
-              ref={provided.innerRef}
-            >
-              <div className="flex mt-4">
-                {allLanes.map((lane, index) => (
-                  <PipelineLane
-                    allTickets={allTickets}
-                    setAllTickets={setAllTickets}
-                    subaccountId={subaccountId}
-                    pipelineId={pipelineId}
-                    tickets={lane.Tickets}
-                    laneDetails={lane}
-                    index={index}
-                    key={lane.id}
-                  />
-                ))}
-                {provided.placeholder}
-              </div>
-            </div>
-          )}
-        </Droppable>
+          <div className="flex mt-4">
+            {allLanes.map((lane, index) => (
+              <PipelineLane
+                allTickets={allTickets}
+                setAllTickets={setAllTickets}
+                subaccountId={subaccountId}
+                pipelineId={pipelineId}
+                tickets={lane.Tickets}
+                laneDetails={lane}
+                index={index}
+                key={lane.id}
+              />
+            ))}
+          </div>
+        </div>
         {allLanes.length === 0 && (
           <div className="flex items-center justify-center w-full flex-col">
             <div className="opacity-100">
@@ -186,7 +179,7 @@ const PipelineView: React.FC<Props> = ({
           </div>
         )}
       </div>
-    </DragDropContext>
+    </DndContext>
   )
 }
 

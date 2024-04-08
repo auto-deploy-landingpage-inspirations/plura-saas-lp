@@ -11,10 +11,10 @@ import { toast } from "@/components/ui/use-toast";
 import { deleteTicket, saveActivityLogsNotification } from "@/lib/queries";
 import { TicketWithTags } from "@/lib/types";
 import { useModal } from "@/providers/modal-provider";
+import { useDraggable } from "@dnd-kit/core";
 import { Contact2, Edit, MoreHorizontalIcon, Trash, User2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction } from "react";
-import { Draggable } from "react-beautiful-dnd";
 
 type Props = {
   setAllTickets: Dispatch<SetStateAction<TicketWithTags>>;
@@ -32,8 +32,16 @@ const PipelineTicket: React.FC<Props> = ({
   allTickets
 }) => {
 
-    const router = useRouter()
+  const router = useRouter()
   const { setOpen, data } = useModal()
+
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+    id: ticket.id.toString(),
+  });
+  const style = transform ? {
+    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+  } : undefined;
+
 
   const editNewTicket = (ticket: TicketWithTags[0]) => {
     setAllTickets((tickets) =>
@@ -91,27 +99,11 @@ const PipelineTicket: React.FC<Props> = ({
   }
 
   return (
-    <Draggable draggableId={ticket.id.toString()} index={index}>
-      {(provided, snapshot) => {
-        if (snapshot.isDragging) {
-          const offset = { x: 300, y: 20 }
-          // @ts-ignore
-          const x = provided.draggableProps.style?.left - offset.x;
-          // @ts-ignore
-          const y = provided.draggableProps.style?.top - offset.y;
-          // @ts-ignore
-          provided.draggableProps.style = {
-            ...provided.draggableProps.style,
-            left: x,
-            top: y
-          }
-        }
-
-        return (
           <div
-            {...provided.draggableProps}
-            {...provided.dragHandleProps}
-            ref={provided.innerRef}
+            {...attributes}
+            {...listeners}
+            ref={setNodeRef}
+            style={style}
           >
             <AlertDialog>
               <DropdownMenu>
@@ -248,9 +240,6 @@ const PipelineTicket: React.FC<Props> = ({
               </DropdownMenu>
             </AlertDialog>
           </div>
-        )
-      }}
-    </Draggable>
   )
 }
 
