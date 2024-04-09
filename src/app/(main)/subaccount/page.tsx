@@ -32,7 +32,7 @@ export default async function SubAccountMainPage({ searchParams }: Props) {
   }
 
   if (getFirstSubaccountWithAccess) {
-    return redirect(`/subaccount/${getFirstSubaccountWithAccess.subAccountId}/dashboard`);
+    return redirect(`/subaccount/${getFirstSubaccountWithAccess.subAccountId}`);
   }
 
   return <Unauthorized />

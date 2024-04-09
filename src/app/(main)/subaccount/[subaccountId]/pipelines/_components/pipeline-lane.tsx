@@ -25,7 +25,6 @@ import { deleteLane, saveActivityLogsNotification } from '@/lib/queries'
 import { LaneDetail, TicketWithTags } from '@/lib/types'
 import { cn } from '@/lib/utils'
 import { useModal } from '@/providers/modal-provider'
-import { Draggable, Droppable } from 'react-beautiful-dnd'
 import { Edit, MoreVertical, PlusCircleIcon, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import React, { Dispatch, SetStateAction, useMemo } from 'react'
@@ -33,6 +32,9 @@ import CustomModal from '@/components/global/custom-modal'
 import TicketForm from '@/components/forms/ticket-form'
 import PipelineTicket from './pipeline-ticket'
 import { useDraggable, useDroppable } from '@dnd-kit/core'
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 // import PipelineTicket from './pipeline-ticket'
 // WIP : Wireup Tickets
 
@@ -58,17 +60,17 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   const { setOpen } = useModal()
   const router = useRouter()
 
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
-    id: laneDetails.id.toString(),
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+    id: index+1,
   });
-  const style = transform ? {
-    transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
-  } : undefined;
+  const style = transform ?{
+    transform: CSS.Transform.toString(transform),
+    transition
+  }: undefined;
 
   const { isOver, setNodeRef: DroppableRef } = useDroppable({
     id: laneDetails.id.toString(),
   });
-
 
   const amt = new Intl.NumberFormat(undefined, {
     style: 'currency',
@@ -142,12 +144,11 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
     >
       <AlertDialog>
         <DropdownMenu>
-          <div className="bg-slate-200/30 dark:bg-background/20  h-[700px] w-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0 ">
+          <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
             <div
-              className=" h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60  absolute top-0 left-0 right-0 z-10 "
+              className="h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-10"
             >
-              <div className="h-full flex items-center p-4 justify-between cursor-grab border-b-[1px] ">
-                {/* {laneDetails.order} */}
+              <div className="h-full flex items-center p-4 justify-between cursor-grab border-b-[1px]">
                 <div className="flex items-center w-full gap-2">
                   <div
                     className={cn('w-4 h-4 rounded-full')}
@@ -168,7 +169,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
               </div>
             </div>
 
-            <div className=" max-h-[700px] overflow-scroll pt-12 ">
+            <div className=" max-h-[700px] overflow-scroll invisible-scrollbar pt-12">
               <div
                 ref={DroppableRef}
                 className="mt-2"
@@ -239,3 +240,47 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
 }
 
 export default PipelineLane;
+
+
+export function PipelineLaneOverlay({ name }: { name: string; }) {
+  const randomColor = `#${Math.random().toString(16).slice(2, 8)}`;
+  return (
+    <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
+      <div
+        className="h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-0"
+      >
+        <div className="h-full flex items-center p-4 justify-between cursor-grab border-b-[1px] ">
+          {/* {laneDetails.order} */}
+          <div className="flex items-center w-full gap-2">
+            <div
+              className={cn('w-4 h-4 rounded-full')}
+              style={{ background: randomColor }}
+            />
+            <span className="font-bold text-sm">
+              {name}
+            </span>
+          </div>
+          <div className="flex items-center flex-row">
+            <Badge className="bg-white text-black">
+              {"xxxx$"}
+            </Badge>
+            <div>
+              <MoreVertical className="text-muted-foreground cursor-pointer" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div>Options</div>
+        <div>
+          <div className="flex items-center gap-2">
+            <Trash size={15} />
+            Delete
+          </div>
+        </div>
+      </div>
+    </div>
+
+  )
+}
