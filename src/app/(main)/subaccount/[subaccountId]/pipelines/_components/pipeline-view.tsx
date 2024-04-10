@@ -27,9 +27,11 @@ import {
 } from "@dnd-kit/core";
 import {
   SortableContext,
+  arrayMove,
   horizontalListSortingStrategy,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
+import { TicketOverlay } from "./pipeline-ticket";
 
 type Props = {
   lanes: LaneDetail[];
@@ -52,12 +54,13 @@ const PipelineView: React.FC<Props> = ({
   const router = useRouter();
   const [allLanes, setAllLanes] = useState<LaneDetail[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [activeTicket, setActiveTicket] = useState<{ id: string; containerId: string; } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(MouseSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
+      coordinateGetter: sortableKeyboardCoordinates,
     })
   );
 
@@ -86,31 +89,98 @@ const PipelineView: React.FC<Props> = ({
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
-    setActiveId((active?.id as number - 1).toString());
+    const containerId: string = active.data.current?.sortable?.containerId;
+    if (containerId === 'lanes')
+      setActiveId(active?.id?.toString());
+    else {
+      setActiveTicket({ id: active?.id?.toString(), containerId: containerId });
+    }
   }
 
   const onDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     console.log(active);
     console.log(over);
-    // const sId = active?.id;
-    // const dId = over?.id;
-    // const source = allLanes.findIndex(lane => lane.id === sId);
-    // const destination = allLanes.findIndex(lane => lane.id === dId);
-    const source = active?.id as number - 1;
-    const destination = over?.id as number - 1;
-    if (source != destination) {
-      const newLanes = [...allLanes]
-        .toSpliced(source, 1)
-        .toSpliced(destination, 0, allLanes[source])
-        .map((lane, idx) => {
-          return { ...lane, order: idx }
-        })
-      setAllLanes(newLanes)
-      updateLanesOrder(newLanes)
+    const containerId: string = active.data.current?.sortable?.containerId;
+    if (containerId === 'lanes') {
+      const source = allLanes.findIndex(lane => lane.id === active?.id);
+      const destination = allLanes.findIndex(lane => lane.id === over?.id);
+      // const source = active?.id as number - 1;
+      // const destination = over?.id as number - 1;
+      if (source != destination) {
+        const newLanes = [...allLanes]
+          .toSpliced(source, 1)
+          .toSpliced(destination, 0, allLanes[source])
+          .map((lane, idx) => {
+            return { ...lane, order: idx }
+          })
+        arrayMove(allLanes, source, destination);
+        setAllLanes(newLanes)
+        updateLanesOrder(newLanes)
+      }
     }
+    else {
+      const source = allLanes.findIndex(lane => lane.id === active?.id);
+      const destination = allLanes.findIndex(lane => lane.id === over?.id);
+      if (source === destination) return;
+      const sourceContainerId: string = active.data?.current?.sortable?.containerId;
+      const destContainerId: string = over?.data?.current?.sortable?.containerId;
 
+      let newLanes = [...allLanes];
+      const originLane = newLanes.find(
+        (lane) => lane.id === sourceContainerId
+      );
+      const destinationLane = newLanes.find(
+        (lane) => lane.id === destContainerId
+      );
+
+      if (!originLane || !destinationLane) return;
+
+      if (containerId === destContainerId) {
+        const newOrderedTickets = [...originLane.Tickets]
+          .toSpliced(source, 1)
+          .toSpliced(destination, 0, originLane.Tickets[source])
+          .map((item, idx) => {
+            return { ...item, order: idx }
+          });
+        console.log(originLane.Tickets);
+        const newOrderedLanes = newLanes.map((lane) => {
+          if (lane.id === originLane.id) {
+            lane.Tickets = newOrderedTickets;
+          }
+          return lane;
+        });
+        setAllLanes(newOrderedLanes);
+        updateTicketsOrder(newOrderedTickets);
+        setActiveTicket(null);
+        router.refresh();
+      }
+      else {
+        const [currentTicket] = originLane.Tickets.splice(source, 1);
+
+        originLane.Tickets.forEach((ticket, idx) => {
+          ticket.order = idx
+        });
+
+        destinationLane.Tickets.splice(destination, 0, {
+          ...currentTicket,
+          laneId: destContainerId,
+        });
+
+        destinationLane.Tickets.forEach((ticket, idx) => {
+          ticket.order = idx
+        });
+        setAllLanes(newLanes);
+        updateTicketsOrder([
+          ...destinationLane.Tickets,
+          ...originLane.Tickets,
+        ]);
+        router.refresh();
+      }
+    }
     setActiveId(null);
+    setActiveTicket(null);
+
     // const { destination, source, type } = dropResult
     // if (
     //   !destination ||
@@ -218,14 +288,19 @@ const PipelineView: React.FC<Props> = ({
                 tickets={lane.Tickets}
                 laneDetails={lane}
                 index={index}
-                key={lane.id}
+                key={lane.id.toString()}
               />
             ))}
-            <DragOverlay>
+            <DragOverlay dropAnimation={null}>
               {activeId && (
                 <PipelineLaneOverlay
-                  name={allLanes[parseInt(activeId)].name}
-                  color={allLanes[parseInt(activeId)].color}
+                  name={allLanes.find(lane => lane.id === activeId)?.name!}
+                  color={allLanes.find(lane => lane.id === activeId)?.color!}
+                />
+              )}
+              {activeTicket && (
+                <TicketOverlay
+                  ticket={allTickets.find(ticket => ticket.id === activeTicket.id)!}
                 />
               )}
             </DragOverlay>
