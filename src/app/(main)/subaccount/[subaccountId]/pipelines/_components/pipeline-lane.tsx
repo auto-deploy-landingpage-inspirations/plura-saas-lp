@@ -31,8 +31,7 @@ import React, { Dispatch, SetStateAction, useMemo } from 'react'
 import CustomModal from '@/components/global/custom-modal'
 import TicketForm from '@/components/forms/ticket-form'
 import PipelineTicket from './pipeline-ticket'
-import { useDraggable, useDroppable } from '@dnd-kit/core'
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+import { useDroppable } from '@dnd-kit/core'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 // import PipelineTicket from './pipeline-ticket'
@@ -46,6 +45,7 @@ interface PipelaneLaneProps {
   laneDetails: LaneDetail;
   subaccountId: string;
   index: number;
+  color?: string;
 }
 
 const PipelineLane: React.FC<PipelaneLaneProps> = ({
@@ -56,6 +56,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   subaccountId,
   allTickets,
   index,
+  color
 }) => {
   const { setOpen } = useModal()
   const router = useRouter()
@@ -84,8 +85,6 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
       0
     )
   }, [tickets]);
-
-  const randomColor = `#${Math.random().toString(16).slice(2, 8)}`;
 
   const addNewTicket = (ticket: TicketWithTags[0]) => {
     setAllTickets([...allTickets, ticket]);
@@ -152,7 +151,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                 <div className="flex items-center w-full gap-2">
                   <div
                     className={cn('w-4 h-4 rounded-full')}
-                    style={{ background: randomColor }}
+                    style={{ background: laneDetails.color }}
                   />
                   <span className="font-bold text-sm">
                     {laneDetails.name}
@@ -242,10 +241,9 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
 export default PipelineLane;
 
 
-export function PipelineLaneOverlay({ name }: { name: string; }) {
-  const randomColor = `#${Math.random().toString(16).slice(2, 8)}`;
+export function PipelineLaneOverlay({ name, color }: { name: string; color: string; }) {
   return (
-    <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
+    <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] md:-ml-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
       <div
         className="h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-0"
       >
@@ -254,7 +252,7 @@ export function PipelineLaneOverlay({ name }: { name: string; }) {
           <div className="flex items-center w-full gap-2">
             <div
               className={cn('w-4 h-4 rounded-full')}
-              style={{ background: randomColor }}
+              style={{ background: color }}
             />
             <span className="font-bold text-sm">
               {name}

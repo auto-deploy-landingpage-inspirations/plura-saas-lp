@@ -23,15 +23,13 @@ import {
   PointerSensor,
   closestCorners,
   useSensor,
-  useSensors
+  useSensors,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   horizontalListSortingStrategy,
   sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { getEventCoordinates } from "@dnd-kit/utilities";
-import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 
 type Props = {
   lanes: LaneDetail[];
@@ -191,8 +189,6 @@ const PipelineView: React.FC<Props> = ({
       collisionDetection={closestCorners}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
-      autoScroll={{ acceleration: 0, layoutShiftCompensation: false, threshold: { x: 1, y: 0.2 } }}
-      modifiers={[restrictToHorizontalAxis]}
     >
       <div className="bg-white/60 dark:bg-background/60 rounded-xl p-4 use-automation-zoom-in">
         <div className="flex items-center justify-between">
@@ -225,11 +221,11 @@ const PipelineView: React.FC<Props> = ({
                 key={lane.id}
               />
             ))}
-            <DragOverlay
-            >
+            <DragOverlay>
               {activeId && (
                 <PipelineLaneOverlay
                   name={allLanes[parseInt(activeId)].name}
+                  color={allLanes[parseInt(activeId)].color}
                 />
               )}
             </DragOverlay>

@@ -51,7 +51,7 @@ const PipelinePage: React.FC<Props> = async ({ params }) => {
       </TabsList>
       <TabsContent value="view">
         <PipelineView
-          lanes={lanes}
+          lanes={lanes.map((lane) => ({ ...lane, color: `#${Math.random().toString(16).slice(2, 8)}` }))}
           pipelineId={params.pipelineId}
           subaccountId={params.subaccountId}
           pipelineDetails={pipelineDetails}

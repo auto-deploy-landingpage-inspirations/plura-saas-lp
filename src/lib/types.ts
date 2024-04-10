@@ -53,6 +53,7 @@ export type TicketAndTags = Ticket & {
 
 export type LaneDetail = Lane & {
   Tickets: TicketAndTags[]
+  color?: string
 }
 
 export const CreatePipelineFormSchema = z.object({
