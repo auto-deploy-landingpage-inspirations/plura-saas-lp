@@ -633,7 +633,6 @@ export const updateTicketsOrder = async (tickets: Ticket[]) => {
       });
     });
     await db.$transaction(updateTransactions);
-    console.log("Reordered Tickets")
   } catch (error) {
     console.log(error);
   }

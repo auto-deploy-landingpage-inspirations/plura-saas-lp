@@ -248,7 +248,7 @@ export default PipelineTicket
 
 export function TicketOverlay({ ticket }: { ticket: TicketWithTags[0] }) {
   return (
-    <Card className="my-4 md:-ml-[300px] max-w-[300px] dark:bg-slate-900 bg-white shadow-none transition-all">
+    <Card className="my-4 md:-ml-[300px] max-w-[280px] dark:bg-slate-900 bg-white shadow-none transition-all">
       <CardHeader className="p-[12px]">
         <CardTitle className="flex items-center justify-between">
           <span className="text-lg w-full">{ticket.name}</span>

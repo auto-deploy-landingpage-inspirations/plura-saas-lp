@@ -31,7 +31,6 @@ import React, { Dispatch, SetStateAction, useMemo } from 'react'
 import CustomModal from '@/components/global/custom-modal'
 import TicketForm from '@/components/forms/ticket-form'
 import PipelineTicket from './pipeline-ticket'
-import { useDroppable } from '@dnd-kit/core'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 // import PipelineTicket from './pipeline-ticket'
@@ -73,7 +72,6 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   })
 
   const laneAmt = useMemo(() => {
-    console.log(tickets)
     return tickets.reduce(
       (sum, ticket) => sum + (Number(ticket?.value) || 0),
       0
@@ -126,8 +124,6 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
       console.log(error)
     }
   }
-  console.log("Pipeline-lane: ")
-  console.log(tickets)
 
   return (
     <div
@@ -170,20 +166,24 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                 items={tickets}
                 strategy={verticalListSortingStrategy}
               >
-                <div
-                  className="mt-2"
-                >
+                <div className='mt-5'>
                   {tickets.map((ticket, index) => (
-                      (ticket && ticket.id) &&
-                      <PipelineTicket
-                        allTickets={allTickets}
-                        setAllTickets={setAllTickets}
-                        subaccountId={subaccountId}
-                        ticket={ticket}
-                        key={ticket.id.toString()}
-                        index={index}
-                      />
-                    ))}
+                    (ticket && ticket.id) &&
+                    <PipelineTicket
+                      allTickets={allTickets}
+                      setAllTickets={setAllTickets}
+                      subaccountId={subaccountId}
+                      ticket={ticket}
+                      key={ticket.id.toString()}
+                      index={index}
+                    />
+                  ))}
+
+                  {tickets.length === 0 && (
+                    <div className="text-sm text-center text-muted-foreground">
+                      No tickets in this lane
+                    </div>
+                  )}
                 </div>
               </SortableContext>
             </div>
