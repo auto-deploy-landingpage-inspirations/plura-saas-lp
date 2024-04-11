@@ -150,8 +150,108 @@ const PipelineView: React.FC<Props> = ({
       else {
         const sourceLane = allLanes.find(lane => lane.id === sourceContainerId)!;
         const destinationLane = allLanes.find(lane => lane.id === destContainerId)!;
-        const source = sourceLane.Tickets.findIndex(ticket => ticket.id === active?.id);
-        const destination = destinationLane.Tickets.findIndex(ticket => ticket.id === over?.id);
+
+        if (destContainerId === 'lanes') {
+          let newLanes = [...allLanes];
+          const originLane = newLanes.find(
+            (lane) => lane.id === sourceContainerId
+          )!;
+          const destLaneId = over?.id;
+          const destinationLane = newLanes.find(
+            (lane) => lane.id === destLaneId
+          )!;
+
+          const source = originLane.Tickets.findIndex(ticket => ticket.id === active?.id);
+
+          const [currentTicket] = originLane.Tickets.splice(source, 1);
+
+          originLane.Tickets.forEach((ticket, idx) => {
+            ticket.order = idx
+          });
+
+          destinationLane.Tickets.push({
+            ...currentTicket,
+            laneId: destContainerId,
+          });
+
+          destinationLane.Tickets.forEach((ticket, idx) => {
+            ticket.order = idx
+          });
+          const newOrderedTicketsLanes = newLanes.map((lane) => {
+            if (lane.id === originLane.id) {
+              lane.Tickets = originLane.Tickets;
+            }
+            if (lane.id === destinationLane.id) {
+              lane.Tickets = destinationLane.Tickets;
+            }
+            return lane;
+          });
+          setAllLanes(newOrderedTicketsLanes);
+          updateTicketsOrder([
+            ...destinationLane.Tickets,
+            ...originLane.Tickets,
+          ]);
+          router.refresh();
+        } else {
+
+          const source = sourceLane.Tickets.findIndex(ticket => ticket.id === active?.id);
+          const destination = destinationLane.Tickets.findIndex(ticket => ticket.id === over?.id);
+
+          const [currentTicket] = originLane.Tickets.splice(source, 1);
+
+          originLane.Tickets.forEach((ticket, idx) => {
+            ticket.order = idx
+          });
+
+          destinationLane.Tickets.splice(destination, 0, {
+            ...currentTicket,
+            laneId: destContainerId,
+          });
+
+          destinationLane.Tickets.forEach((ticket, idx) => {
+            ticket.order = idx
+          });
+
+          const newOrderedTicketsLanes = newLanes.map((lane) => {
+            if (lane.id === originLane.id) {
+              lane.Tickets = originLane.Tickets;
+            }
+            if (lane.id === destinationLane.id) {
+              lane.Tickets = destinationLane.Tickets;
+            }
+            return lane;
+          });
+          setAllLanes(newOrderedTicketsLanes);
+          updateTicketsOrder([
+            ...destinationLane.Tickets,
+            ...originLane.Tickets,
+          ]);
+          router.refresh();
+        }
+      }
+    }
+    setActiveId(null);
+    setActiveTicket(null);
+  }
+
+  const onDragOver = (event: DragOverEvent) => {
+    const { active, over } = event;
+    const containerId: string = active.data.current?.sortable?.containerId;
+    if (containerId !== 'lanes') {
+      const sourceContainerId: string = active.data?.current?.sortable?.containerId;
+      const destContainerId: string = over?.data?.current?.sortable?.containerId;
+
+      if (destContainerId === 'lanes') {
+        let newLanes = [...allLanes];
+        const originLane = newLanes.find(
+          (lane) => lane.id === sourceContainerId
+        )!;
+        const destLaneId = over?.id;
+        const destinationLane = newLanes.find(
+          (lane) => lane.id === destLaneId
+        )!;
+
+        const source = originLane.Tickets.findIndex(ticket => ticket.id === active?.id);
 
         const [currentTicket] = originLane.Tickets.splice(source, 1);
 
@@ -159,15 +259,14 @@ const PipelineView: React.FC<Props> = ({
           ticket.order = idx
         });
 
-        destinationLane.Tickets.splice(destination, 0, {
+        destinationLane.Tickets.push({
           ...currentTicket,
-          laneId: destContainerId,
+          laneId: destLaneId?.toString()!,
         });
 
         destinationLane.Tickets.forEach((ticket, idx) => {
           ticket.order = idx
         });
-
         const newOrderedTicketsLanes = newLanes.map((lane) => {
           if (lane.id === originLane.id) {
             lane.Tickets = originLane.Tickets;
@@ -183,20 +282,8 @@ const PipelineView: React.FC<Props> = ({
           ...originLane.Tickets,
         ]);
         router.refresh();
+        return;
       }
-    }
-    setActiveId(null);
-    setActiveTicket(null);
-  }
-
-  const onDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    console.log("active", active)
-    console.log("over", over)
-    const containerId: string = active.data.current?.sortable?.containerId;
-    if (containerId !== 'lanes') {
-      const sourceContainerId: string = active.data?.current?.sortable?.containerId;
-      const destContainerId: string = over?.data?.current?.sortable?.containerId;
 
       let newLanes = [...allLanes];
       const originLane = newLanes.find(
@@ -209,9 +296,7 @@ const PipelineView: React.FC<Props> = ({
       if (!originLane || !destinationLane) return;
 
       if (containerId !== destContainerId) {
-        const sourceLane = allLanes.find(lane => lane.id === sourceContainerId)!;
-        const destinationLane = allLanes.find(lane => lane.id === destContainerId)!;
-        const source = sourceLane.Tickets.findIndex(ticket => ticket.id === active?.id);
+        const source = originLane.Tickets.findIndex(ticket => ticket.id === active?.id);
         const destination = destinationLane.Tickets.findIndex(ticket => ticket.id === over?.id);
 
         const [currentTicket] = originLane.Tickets.splice(source, 1);
