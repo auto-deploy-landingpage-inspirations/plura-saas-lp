@@ -149,7 +149,7 @@ const PipelineView: React.FC<Props> = ({
       }
       else {
         const sourceLane = allLanes.find(lane => lane.id === sourceContainerId)!;
-        const destinationLane = allLanes.find(lane => lane.id === sourceContainerId)!;
+        const destinationLane = allLanes.find(lane => lane.id === destContainerId)!;
         const source = sourceLane.Tickets.findIndex(ticket => ticket.id === active?.id);
         const destination = destinationLane.Tickets.findIndex(ticket => ticket.id === over?.id);
 
@@ -191,6 +191,8 @@ const PipelineView: React.FC<Props> = ({
 
   const onDragOver = (event: DragOverEvent) => {
     const { active, over } = event;
+    console.log("active", active)
+    console.log("over", over)
     const containerId: string = active.data.current?.sortable?.containerId;
     if (containerId !== 'lanes') {
       const sourceContainerId: string = active.data?.current?.sortable?.containerId;
@@ -208,7 +210,7 @@ const PipelineView: React.FC<Props> = ({
 
       if (containerId !== destContainerId) {
         const sourceLane = allLanes.find(lane => lane.id === sourceContainerId)!;
-        const destinationLane = allLanes.find(lane => lane.id === sourceContainerId)!;
+        const destinationLane = allLanes.find(lane => lane.id === destContainerId)!;
         const source = sourceLane.Tickets.findIndex(ticket => ticket.id === active?.id);
         const destination = destinationLane.Tickets.findIndex(ticket => ticket.id === over?.id);
 
