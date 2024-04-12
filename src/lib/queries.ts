@@ -618,7 +618,6 @@ export const updateLanesOrder = async (lanes: Lane[]) => {
     });
 
     await db.$transaction(updateTransactions);
-    console.log("Reordered Lanes")
   } catch (error) {
     console.log(error);
   }
