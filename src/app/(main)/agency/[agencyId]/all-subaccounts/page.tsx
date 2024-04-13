@@ -26,7 +26,7 @@ const AllSubaccounts: React.FC<Props> = async ({ params }) => {
         />
         <Command className="rounded-lg bg-transparent">
           <CommandInput placeholder="Search Account..." />
-          <CommandList>
+          <CommandList className="invisible-scrollbar">
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup heading="Sub Accounts">
               {!!user.Agency?.SubAccount.length ? (
