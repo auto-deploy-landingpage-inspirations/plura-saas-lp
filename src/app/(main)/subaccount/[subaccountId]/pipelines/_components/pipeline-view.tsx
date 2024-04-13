@@ -21,7 +21,9 @@ import {
   DragStartEvent,
   KeyboardSensor,
   MouseSensor,
+  PointerActivationConstraint,
   PointerSensor,
+  TouchSensor,
   closestCorners,
   useSensor,
   useSensors,
@@ -56,9 +58,19 @@ const PipelineView: React.FC<Props> = ({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeTicket, setActiveTicket] = useState<{ id: string; containerId: string; } | null>(null);
 
+  const detectSensor = () => {
+    //const isWebEntry = JSON.parse(sessionStorage.getItem('isWebEntry')!);
+    const isWebEntry = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    console.log("isWebEntry: ", isWebEntry);
+    return !isWebEntry ? PointerSensor : TouchSensor;
+  }
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(MouseSensor),
+    useSensor(detectSensor(), {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })

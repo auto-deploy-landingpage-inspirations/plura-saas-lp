@@ -59,7 +59,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   });
   const style = transform ? {
     transform: CSS.Transform.toString(transform),
-    transition
+    transition,
   } : undefined;
 
   const amt = new Intl.NumberFormat(undefined, {
@@ -240,7 +240,7 @@ export default PipelineLane;
 
 export function PipelineLaneOverlay({ name, color }: { name: string; color: string; }) {
   return (
-    <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] translate-x-[-300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
+    <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] md:translate-x-[-300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
       <div
         className="h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-0"
       >
