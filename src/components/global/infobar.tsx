@@ -51,7 +51,7 @@ export default function Infobar({ subAccountId, notifications, role, className }
                 <BellIcon size={17} />
               </div>
             </SheetTrigger>
-            <SheetContent className="mt-4 mr-4 pr-4 flex flex-col">
+            <SheetContent className="mt-4 mr-4 pr-4 overflow-y-scroll scroll-bar">
               <SheetHeader className="text-left">
                 <SheetTitle>
                   Notifications
@@ -66,7 +66,7 @@ export default function Infobar({ subAccountId, notifications, role, className }
                 </SheetDescription>
               </SheetHeader>
               {allNotifications?.map(notification => (
-                <div key={notification.id} className="flex flex-col gap-y-2 mb-2 overflow-x-scroll text-ellipsis ">
+                <div key={notification.id} className="flex flex-col gap-y-2 mb-2 overflow-x-scroll invisible-scrollbar text-ellipsis ">
                   <div className="flex gap-2">
                     <Avatar>
                       <AvatarImage src={notification.User.avatarUrl} alt="Profile Picture" />

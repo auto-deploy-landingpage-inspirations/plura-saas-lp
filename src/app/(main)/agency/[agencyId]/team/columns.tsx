@@ -3,13 +3,7 @@
 import clsx from 'clsx'
 import { ColumnDef } from '@tanstack/react-table'
 import {
-  Agency,
-  AgencySidebarOption,
-  Permissions,
-  Prisma,
   Role,
-  SubAccount,
-  User,
 } from '@prisma/client'
 import Image from 'next/image'
 
@@ -156,7 +150,7 @@ interface CellActionsProps {
 }
 
 const CellActions: React.FC<CellActionsProps> = ({ rowData }) => {
-  const { data, setOpen } = useModal()
+  const { setOpen } = useModal()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const router = useRouter()
