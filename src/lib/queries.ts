@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { Agency, Lane, Plan, Prisma, Role, SubAccount, Tag, Ticket, User } from "@prisma/client";
 import { v4 } from "uuid";
 import { CreateFunnelFormSchema, CreateMediaType } from "./types";
-import { z } from "zod";
+import { string, z } from "zod";
 
 export const getAuthUserDetails = async () => {
   const user = await currentUser();
@@ -785,9 +785,20 @@ export const deleteTag = async (tagId: string) => {
 }
 
 export const getTagsForSubaccount = async (subaccountId: string) => {
-  const response = await db.subAccount.findUnique( {
+  const response = await db.subAccount.findUnique({
     where: { id: subaccountId },
     select: { Tags: true }
+  });
+  return response;
+}
+
+export const upsertContact = async (contact: Prisma.ContactUncheckedCreateInput) => {
+  const response = await db.contact.upsert({
+    where: {
+      id: contact.id || v4(),
+    },
+    update: contact, 
+    create: contact, 
   });
   return response;
 }
