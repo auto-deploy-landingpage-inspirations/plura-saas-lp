@@ -361,7 +361,7 @@ const PipelineView: React.FC<Props> = ({
           strategy={horizontalListSortingStrategy}
         >
           <div className="flex mt-4 overflow-scroll scroll-bar gap-4 relative">
-            {allLanes.map((lane, index) => (
+            {allLanes.map((lane) => (
               <PipelineLane
                 allTickets={allTickets}
                 setAllTickets={setAllTickets}
@@ -369,7 +369,6 @@ const PipelineView: React.FC<Props> = ({
                 pipelineId={pipelineId}
                 tickets={lane.Tickets}
                 laneDetails={lane}
-                index={index}
                 key={lane.id.toString()}
               />
             ))}

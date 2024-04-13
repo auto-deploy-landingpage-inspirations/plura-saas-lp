@@ -96,7 +96,6 @@ const TicketForm: React.FC<Props> = ({ getNewTicket, laneId, subaccountId }) => 
     if (subaccountId) {
       const fetchData = async () => {
         const response = await getSubaccountTeamMembers(subaccountId);
-        console.log(response);
         if (response) setAllTeamMembers(response);
       }
       fetchData();

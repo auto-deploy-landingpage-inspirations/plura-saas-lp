@@ -33,8 +33,6 @@ import TicketForm from '@/components/forms/ticket-form'
 import PipelineTicket from './pipeline-ticket'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-// import PipelineTicket from './pipeline-ticket'
-// WIP : Wireup Tickets
 
 interface PipelaneLaneProps {
   setAllTickets: Dispatch<SetStateAction<TicketWithTags>>;
@@ -43,7 +41,6 @@ interface PipelaneLaneProps {
   pipelineId: string;
   laneDetails: LaneDetail;
   subaccountId: string;
-  index: number;
 }
 
 const PipelineLane: React.FC<PipelaneLaneProps> = ({
@@ -53,7 +50,6 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
   laneDetails,
   subaccountId,
   allTickets,
-  index,
 }) => {
   const { setOpen } = useModal()
   const router = useRouter()
@@ -167,7 +163,7 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                 strategy={verticalListSortingStrategy}
               >
                 <div className='mt-5'>
-                  {tickets.map((ticket, index) => (
+                  {tickets.map((ticket) => (
                     (ticket && ticket.id) &&
                     <PipelineTicket
                       allTickets={allTickets}
@@ -175,7 +171,6 @@ const PipelineLane: React.FC<PipelaneLaneProps> = ({
                       subaccountId={subaccountId}
                       ticket={ticket}
                       key={ticket.id.toString()}
-                      index={index}
                     />
                   ))}
 
@@ -250,7 +245,6 @@ export function PipelineLaneOverlay({ name, color }: { name: string; color: stri
         className="h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-0"
       >
         <div className="h-full flex items-center p-4 justify-between cursor-grab border-b-[1px] ">
-          {/* {laneDetails.order} */}
           <div className="flex items-center w-full gap-2">
             <div
               className={cn('w-4 h-4 rounded-full')}

@@ -1,3 +1,4 @@
+'use client';
 import TicketForm from "@/components/forms/ticket-form";
 import CustomModal from "@/components/global/custom-modal";
 import TagComponent from "@/components/global/tag";
@@ -19,7 +20,6 @@ import React, { Dispatch, SetStateAction } from "react";
 type Props = {
   setAllTickets: Dispatch<SetStateAction<TicketWithTags>>;
   ticket: TicketWithTags[0];
-  index: number;
   subaccountId: string;
   allTickets: TicketWithTags;
 }
@@ -27,13 +27,12 @@ type Props = {
 const PipelineTicket: React.FC<Props> = ({
   setAllTickets,
   ticket,
-  index,
   subaccountId,
   allTickets
 }) => {
 
   const router = useRouter()
-  const { setOpen, data } = useModal()
+  const { setOpen } = useModal()
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: ticket.id.toString(),
@@ -45,7 +44,7 @@ const PipelineTicket: React.FC<Props> = ({
 
 
   const editNewTicket = (ticket: TicketWithTags[0]) => {
-    setAllTickets((tickets) =>
+    setAllTickets(() =>
       allTickets.map((t) => {
         if (t.id === ticket.id) {
           return ticket
@@ -199,7 +198,7 @@ const PipelineTicket: React.FC<Props> = ({
                   new Intl.NumberFormat(undefined, {
                     style: 'currency',
                     currency: 'USD',
-                  }).format(+ticket.value)}
+                  }).format(+Number(ticket.value))}
               </span>
             </CardFooter>
           </Card>

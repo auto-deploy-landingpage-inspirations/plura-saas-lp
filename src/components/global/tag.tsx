@@ -5,12 +5,14 @@ interface TagComponentProps {
   title: string;
   colorName: string;
   selectedColor?: (color: string) => void;
+  selected?: boolean;
 }
 
 const TagComponent: React.FC<TagComponentProps> = ({
   colorName,
   title,
   selectedColor,
+  selected
 }) => {
   return (
     <div
@@ -25,6 +27,7 @@ const TagComponent: React.FC<TagComponentProps> = ({
         'border-[1px] border-rose-500': colorName === 'ROSE' && !title,
         'border-[1px] border-emerald-400': colorName === 'GREEN' && !title,
         'border-[1px] border-purple-400': colorName === 'PURPLE' && !title,
+        'border-[2px]': selected === true,
       })}
       key={colorName}
       onClick={() => {
