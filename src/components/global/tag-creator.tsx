@@ -120,7 +120,7 @@ const TagCreator: React.FC<Props> = ({ getSelectedTags, subAccountId, defaultTag
   }
 
   return (
-    <Command className="bg-transparent">
+    <Command className="bg-transparent max-h-[300px]">
       {!!selectedTags.length && (
         <div className="flex flex-wrap gap-2 p-2 bg-background border-2 border-border rounded-md">
           {selectedTags.map((tag) => (
@@ -165,7 +165,7 @@ const TagCreator: React.FC<Props> = ({ getSelectedTags, subAccountId, defaultTag
           className="absolute top-1/2 transform -translate-y-1/2 right-2 hover:text-primary transition-all cursor-pointer text-muted-foreground"
         />
       </div>
-      <CommandList>
+      <CommandList className="scroll-bar bg-secondary/25 border">
         <CommandSeparator />
         <CommandGroup heading="Tags">
           {tags.map((tag) => (
