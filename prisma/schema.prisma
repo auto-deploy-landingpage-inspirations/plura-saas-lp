@@ -181,7 +181,7 @@ model Ticket {
   laneId      String
   order       Int      @default(0)
   Lane        Lane     @relation(fields: [laneId], references: [id], onDelete: Cascade)
-  value       Decimal?
+  value       String?  @db.VarChar(50)
   description String?
   Tags        Tag[]
 
