@@ -63,7 +63,7 @@ export default function AgencyDetails({ data }: Props) {
   const handleSubmit = async (values: z.infer<typeof FormSchema>) => {
     try {
       let newUserData;
-      let customerId;
+      let custId;
       if (!data?.id) {
         const bodyData = {
           email: values.companyEmail,
@@ -74,7 +74,7 @@ export default function AgencyDetails({ data }: Props) {
               state: values.state,
               country: values.country,
               line1: values.address,
-              postCode: values.zipCode,
+              postal_code: values.zipCode,
             },
             name: values.name
           },
@@ -83,39 +83,51 @@ export default function AgencyDetails({ data }: Props) {
             state: values.state,
             country: values.country,
             line1: values.address,
-            postCode: values.zipCode,
+            postal_code: values.zipCode,
           },
         }
+
+        const customerResponse = await fetch("/api/stripe/create-customer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bodyData),
+        });
+        const customerData: { customerId: string } = await customerResponse.json();
+        custId = customerData.customerId;
       }
 
       // WIP : custID
       newUserData = await initUser({ role: 'AGENCY_OWNER' });
 
-      if (!data?.customerId) {
-        await upsertAgency({
-          id: data?.id ? data.id : v4(),
-          customerId: data?.customerId || '',
-          address: values.address,
-          agencyLogo: values.agencyLogo,
-          city: values.city,
-          companyPhone: values.companyPhone,
-          country: values.country,
-          name: values.name,
-          state: values.state,
-          whiteLabel: values.whiteLabel,
-          zipCode: values.zipCode,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          companyEmail: values.companyEmail,
-          connectAccountId: '',
-          goal: 5,
-        });
+      if (!data?.customerId && !custId) return;
 
-        toast({
-          title: "Created agency",
-        });
+      const response = await upsertAgency({
+        id: data?.id ? data.id : v4(),
+        customerId: data?.customerId || custId || '',
+        address: values.address,
+        agencyLogo: values.agencyLogo,
+        city: values.city,
+        companyPhone: values.companyPhone,
+        country: values.country,
+        name: values.name,
+        state: values.state,
+        whiteLabel: values.whiteLabel,
+        zipCode: values.zipCode,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        companyEmail: values.companyEmail,
+        connectAccountId: '',
+        goal: 5,
+      });
 
-        if (data?.id) return router.refresh();
+      toast({
+        title: "Created agency",
+      });
+
+      if (data?.id) return router.refresh();
+
+      if (response) {
+        return router.refresh();
       }
 
     } catch (error) {
@@ -124,7 +136,6 @@ export default function AgencyDetails({ data }: Props) {
         title: "OOPS!!",
         description: "Could not create your agency",
       });
-
     }
   }
 
