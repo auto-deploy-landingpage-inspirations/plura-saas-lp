@@ -41,20 +41,20 @@ export const pricingCards = [
   {
     title: 'Unlimited Saas',
     description: 'The ultimate agency kit',
-    price: '$199',
+    price: 'Rs.199',
     duration: 'month',
     highlight: 'Key features',
     features: ['Rebilling', '24/7 Support team'],
-    priceId: 'price_1P5NkfSBlz3hga5o0zYYrGDM',
+    priceId: 'price_1P5VgTSBlz3hga5oKkZEZTYA',
   },
   {
     title: 'Basic',
     description: 'For serious agency owners',
-    price: '$49',
+    price: 'Rs.49',
     duration: 'month',
     highlight: 'Everything in Starter, plus',
     features: ['Unlimited Sub accounts', 'Unlimited Team members'],
-    priceId: 'price_1P5NkfSBlz3hga5oAPL8ocnx',
+    priceId: 'price_1P5VfwSBlz3hga5oUiQo8jIR',
   },
 ]
 
@@ -203,5 +203,21 @@ export const icons = [
     value: 'clipboardIcon',
     label: 'Clipboard Icon',
     path: ClipboardIcon,
+  },
+]
+
+export const addOnProducts = [
+  { title: 'Priority Support', id: 'prod_PvGBqaTkncXak6' }
+] as const
+
+export const addOnsPricingCards = [
+    {
+    title: 'Priority Support',
+    description: 'VIP addOn',
+    price: 'Rs.450',
+    duration: 'month',
+    highlight: 'Key features',
+    features: ['Rebilling', '24/7 Support team', 'VIP treatment'],
+    priceId: 'price_1P5PeqSBlz3hga5oHjI7nMpg',
   },
 ]

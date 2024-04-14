@@ -1,30 +1,34 @@
-import { db } from "@/lib/db";
-import { stripe } from '@/lib/stripe';
-import { NextResponse } from "next/server";
+import { db } from '@/lib/db'
+import { stripe } from '@/lib/stripe'
+import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-  const { customerId, priceId } = await req.json();
-  if (!customerId || priceId)
-    return new NextResponse("Customer Id or price Id is missing", { status: 400 });
+  const { customerId, priceId } = await req.json()
+  if (!customerId || !priceId)
+    return new NextResponse('Customer Id or price id is missing', {
+      status: 400,
+    })
+
+  const subscriptionExists = await db.agency.findFirst({
+    where: { customerId },
+    include: { Subscription: true },
+  })
 
   try {
-    const subscriptionExists = await db.agency.findFirst({
-      where: { customerId },
-      include: { Subscription: true },
-    });
-
     if (
       subscriptionExists?.Subscription?.subscriptionId &&
       subscriptionExists.Subscription.active
     ) {
-      //update the subs instead of creating one.      
+      //update the subscription instead of creating one.
       if (!subscriptionExists.Subscription.subscriptionId) {
-        throw new Error("Could not find the subscription Id to update the subscription.");
+        throw new Error(
+          'Could not find the subscription Id to update the subscription.'
+        )
       }
-      console.log("Updating the subscription.");
+      console.log('Updating the subscription')
       const currentSubscriptionDetails = await stripe.subscriptions.retrieve(
         subscriptionExists.Subscription.subscriptionId
-      );
+      )
 
       const subscription = await stripe.subscriptions.update(
         subscriptionExists.Subscription.subscriptionId,
@@ -36,18 +40,16 @@ export async function POST(req: Request) {
             },
             { price: priceId },
           ],
-          expand: ['latest_invoice.payment_intent']
+          expand: ['latest_invoice.payment_intent'],
         }
-      );
-
+      )
       return NextResponse.json({
         subscriptionId: subscription.id,
         //@ts-ignore
         clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-      });
+      })
     } else {
-      console.log("Creating a subscription.");
-
+      console.log('Creating a sub')
       const subscription = await stripe.subscriptions.create({
         customer: customerId,
         items: [
@@ -55,20 +57,20 @@ export async function POST(req: Request) {
             price: priceId,
           },
         ],
-        payment_behavior: "default_incomplete",
+        payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
-        expand: ['latest_invoice.payment_intent']
-      });
+        expand: ['latest_invoice.payment_intent'],
+      })
       return NextResponse.json({
         subscriptionId: subscription.id,
         //@ts-ignore
         clientSecret: subscription.latest_invoice.payment_intent.client_secret,
-      });
+      })
     }
   } catch (error) {
     console.log('🔴 Error', error)
     return new NextResponse('Internal Server Error', {
       status: 500,
-    });
+    })
   }
 }

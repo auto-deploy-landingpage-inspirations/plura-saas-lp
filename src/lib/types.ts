@@ -117,4 +117,3 @@ export type StripeCustomerType = {
 }
 
 export type PriceList = Stripe.ApiList<Stripe.Price>;
-
