@@ -17,20 +17,20 @@ const AllSubaccounts: React.FC<Props> = async ({ params }) => {
   const user = await getAuthUserDetails();
   if (!user) return;
   return (
-    <AlertDialog>
-      <div className="flex flex-col">
-        <CreateSubaccountButton
-          user={user}
-          id={params.agencyId}
-          className="w-[200px] self-end m-6"
-        />
-        <Command className="rounded-lg bg-transparent">
-          <CommandInput placeholder="Search Account..." />
-          <CommandList className="invisible-scrollbar">
-            <CommandEmpty>No results found.</CommandEmpty>
-            <CommandGroup heading="Sub Accounts">
-              {!!user.Agency?.SubAccount.length ? (
-                user.Agency.SubAccount.map((subAccount: SubAccount) => (
+    <div className="flex flex-col">
+      <CreateSubaccountButton
+        user={user}
+        id={params.agencyId}
+        className="w-[200px] self-end m-6"
+      />
+      <Command className="rounded-lg bg-transparent">
+        <CommandInput placeholder="Search Account..." />
+        <CommandList className="invisible-scrollbar !max-h-screen">
+          <CommandEmpty>No results found.</CommandEmpty>
+          <CommandGroup heading="Sub Accounts">
+            {!!user.Agency?.SubAccount.length ? (
+              user.Agency.SubAccount.map((subAccount: SubAccount) => (
+                <AlertDialog key={subAccount.id}>
                   <CommandItem
                     key={subAccount.id}
                     className="h-32 !bg-background my-2 text-primary border-[1px] border-border p-4 rounded-lg hover:!bg-background cursor-pointer transition-all"
@@ -79,15 +79,15 @@ const AllSubaccounts: React.FC<Props> = async ({ params }) => {
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </CommandItem>
-                ))
-              ) : (
-                <div className="text-muted-foreground text-center p-4">No SubAccounts</div>
-              )}
-            </CommandGroup>
-          </CommandList>
-        </Command>
-      </div>
-    </AlertDialog>
+                </AlertDialog >
+              ))
+            ) : (
+              <div className="text-muted-foreground text-center p-4">No SubAccounts</div>
+            )}
+          </CommandGroup>
+        </CommandList>
+      </Command>
+    </div >
   )
 }
 
