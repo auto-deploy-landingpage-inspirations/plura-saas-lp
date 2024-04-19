@@ -11,14 +11,22 @@ import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { CheckCircleIcon } from "lucide-react";
 import Link from "next/link";
+import { getStripeOAuthLink } from "@/lib/utils";
+import { Plan } from "@prisma/client";
+import { stripe } from "@/lib/stripe";
 
 type Props = {
   params: {
     agencyId: string,
   },
+  searchParams: {
+    plan: Plan,
+    state: string,
+    code: string
+  }
 }
 
-const Launchpad: React.FC<Props> = async ({ params }) => {
+const Launchpad: React.FC<Props> = async ({ params, searchParams }) => {
   const agencyDetails = await db.agency.findUnique({
     where: { id: params.agencyId },
   });
@@ -37,6 +45,31 @@ const Launchpad: React.FC<Props> = async ({ params }) => {
     agencyDetails.zipCode;
 
   if (!allDetailsExist) return;
+
+  const stripeOAuthLink = getStripeOAuthLink(
+    'agency',
+    `launchpad___${agencyDetails.id}`
+  );
+
+  let connectedStripeAccount = false
+
+  if (searchParams.code) {
+    if (!agencyDetails.connectAccountId) {
+      try {
+        const response = await stripe.oauth.token({
+          grant_type: 'authorization_code',
+          code: searchParams.code,
+        })
+        await db.agency.update({
+          where: { id: params.agencyId },
+          data: { connectAccountId: response.stripe_user_id },
+        })
+        connectedStripeAccount = true
+      } catch (error) {
+        console.log('🔴 Could not connect stripe account')
+      }
+    }
+  }
 
   return (
     <>
@@ -76,7 +109,19 @@ const Launchpad: React.FC<Props> = async ({ params }) => {
                   />
                   <p>Connect your stripe account to accept payment and see your dashboard</p>
                 </div>
-                <Button>Connect</Button>
+                {agencyDetails.connectAccountId || connectedStripeAccount ? (
+                  <CheckCircleIcon
+                    size={50}
+                    className="text-primary p-2 flex-shrink-0"
+                  />
+                ) : (
+                  <Link
+                    className="bg-primary py-2 px-4 rounded-md text-white"
+                    href={stripeOAuthLink}
+                  >
+                    Connect
+                  </Link>
+                )}
               </div>
               <div className="flex justify-between items-center w-full border p-4 rounded-lg gap-2">
                 <div className="flex md:items-center gap-4 flex-col md:!flex-row">
