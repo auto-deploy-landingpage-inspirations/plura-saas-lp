@@ -17,12 +17,14 @@ const BillingPage: React.FC<Props> = async ({ params }) => {
     ids: addOnProducts.map((product) => product.id),
     expand: ['data.default_price'],
   });
-  //WIP : AddOns
-  // const addOnsPrices = await stripe.prices.list({
-  //   product: addOns.data[0].id,
-  //   active: true,
-  // });
-  //
+
+  const addOnsPrices = await Promise.all(addOns.data.map(async (addOn) => {
+    return await stripe.prices.list({
+      product: addOn.id,
+      active: true,
+    });
+  }));
+
   const agencySubscription = await db.agency.findUnique({
     where: {
       id: params.agencyId
@@ -70,7 +72,7 @@ const BillingPage: React.FC<Props> = async ({ params }) => {
           customerId={agencySubscription?.customerId || ''}
           amt={
             agencySubscription?.Subscription?.active === true
-              ? currentPlanDetails?.price || 'Rs.0'
+              ? currentPlanDetails?.price || 'Rs. 0'
               : 'Rs.0'
           }
           buttonCta={
@@ -102,10 +104,10 @@ const BillingPage: React.FC<Props> = async ({ params }) => {
           }
         />
 
-        {addOns.data.map((addOn) => (
+        {addOns.data.map((addOn, index) => (
           <PricingCard
             planExists={agencySubscription?.Subscription?.active === true}
-            prices={prices.data}
+            prices={addOnsPrices[index].data}
             customerId={agencySubscription?.customerId || ''}
             key={addOn.id}
             amt={
