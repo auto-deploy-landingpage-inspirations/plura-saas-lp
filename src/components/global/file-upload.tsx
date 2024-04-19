@@ -13,7 +13,6 @@ export default function FileUpload({ apiEndpoints, onChange, value }: Props) {
   const type = value?.split('.').pop();
 
   if (value) {
-  const src = value;
     return <div className="flex flex-col justify-center items-center">
       {type !== 'pdf' ? (
         <div className="relative w-40 h-40">
@@ -51,7 +50,7 @@ export default function FileUpload({ apiEndpoints, onChange, value }: Props) {
         }}
         onUploadError={(error: Error) => {
             console.log(error)
-          } }
+          }}
         />
     </div>
   )

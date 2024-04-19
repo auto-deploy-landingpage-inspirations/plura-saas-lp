@@ -1,4 +1,5 @@
 import AgencyDetails from "@/components/forms/agency-details";
+import Unauthorized from "@/components/unauthorized";
 import { getAuthUserDetails, verifyAndAcceptInvitation } from "@/lib/queries";
 import { currentUser } from "@clerk/nextjs";
 import { Plan } from "@prisma/client";
@@ -18,14 +19,14 @@ export default async function AgencyPage({ searchParams }: { searchParams: { pla
         return redirect(`/agency/${agencyId}/billing?plan=${searchParams.plan}`);
       }
       if (searchParams.state) {
-        const statePath = searchParams.state.split("__")[0];
+        const statePath = searchParams.state.split("___")[0];
         const stateAgencyId = searchParams.state.split("___")[1];
-        if (!stateAgencyId) return <div>Not Authorized</div>;
+        if (!stateAgencyId) return <Unauthorized />;
         return redirect(`/agency/${stateAgencyId}/${statePath}?code=${searchParams.code}`);
       }
       else return redirect(`/agency/${agencyId}`);
     } else {
-      return <div>Not Authorized</div>;
+      return <Unauthorized />;
     }
   }
 
