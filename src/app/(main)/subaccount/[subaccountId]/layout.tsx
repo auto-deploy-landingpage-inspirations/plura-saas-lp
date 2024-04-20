@@ -1,4 +1,3 @@
-import BlurPage from "@/components/global/blur-page";
 import Infobar from "@/components/global/infobar";
 import Sidebar from "@/components/sidebar";
 import Unauthorized from "@/components/unauthorized";
@@ -58,9 +57,7 @@ const SubaccountLayout: React.FC<Props> = async ({ children, params }) => {
           subAccountId={params.subaccountId as string}
         />
         <div className="relative">
-          <BlurPage>
-            {children}
-          </BlurPage>
+          {children}
         </div>
       </div>
     </div>

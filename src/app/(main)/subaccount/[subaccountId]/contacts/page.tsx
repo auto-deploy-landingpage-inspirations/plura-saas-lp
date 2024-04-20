@@ -6,6 +6,7 @@ import { Contact, SubAccount, Ticket } from "@prisma/client";
 import React from "react";
 import format from "date-fns/format";
 import CreateContactButton from "./_components/create-contact-button";
+import BlurPage from "@/components/global/blur-page";
 
 type Props = {
   params: { subaccountId: string }
@@ -51,7 +52,7 @@ const ContactsPage: React.FC<Props> = async ({ params }) => {
   }
 
   return (
-    <>
+    <BlurPage>
       <h1 className="text-4xl p-4" >Contact</h1>
       <CreateContactButton  
         subaccountId={params.subaccountId}
@@ -93,7 +94,7 @@ const ContactsPage: React.FC<Props> = async ({ params }) => {
           ))}
         </TableBody>
       </Table>
-    </>
+    </BlurPage>
   )
 }
 
