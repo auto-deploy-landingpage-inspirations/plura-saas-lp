@@ -28,12 +28,13 @@ const Page: React.FC<Props> = async ({ params }) => {
         funnelId={params.funnelId}
         pageDetails={funnelPageDetails}
       >
-        <FunnelEditorNavigation 
+        <FunnelEditorNavigation
           funnelId={params.funnelId}
           funnelPageDetails={funnelPageDetails}
           subaccountId={params.subaccountId}
         />
         <FunnelEditorSidebar
+          subaccountId={params.subaccountId}
         />
       </EditorProvider>
     </div>
