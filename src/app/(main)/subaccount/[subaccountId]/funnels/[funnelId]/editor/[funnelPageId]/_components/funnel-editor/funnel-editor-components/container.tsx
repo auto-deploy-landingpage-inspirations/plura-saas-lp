@@ -65,7 +65,7 @@ const Container = ({ element }: Props) => {
             containerId: id,
             elementDetails: {
               content: {
-                src: 'https://www.youtube.com/embed/A3l6YYkXzzg?si=zbcCeWcpq7Cwf8W1',
+                src: 'https://www.youtube.com/embed/xvFZjo5PgG0?si=LDccnB3_JGkEzf-v',
               },
               id: v4(),
               name: 'Video',
