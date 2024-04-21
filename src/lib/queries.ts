@@ -875,3 +875,10 @@ export const deleteFunnelePage = async (funnelPageId: string) => {
   });
   return response;
 }
+
+export const getFunnelPageDetails = async (funnelPageId: string) => {
+  const response = db.funnelPage.findUnique({
+    where: { id: funnelPageId }
+  });
+  return response;
+}
