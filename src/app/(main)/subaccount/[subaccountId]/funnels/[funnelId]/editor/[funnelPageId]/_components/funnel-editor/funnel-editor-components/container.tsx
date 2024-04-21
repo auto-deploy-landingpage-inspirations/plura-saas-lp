@@ -1,45 +1,127 @@
-import { EditorElement, useEditor } from "@/providers/editor/editor-provider";
-import React from "react";
-import clsx from "clsx";
-import { EditorBtns } from "@/lib/constants";
-import { v4 } from "uuid";
-import { defaultStyles } from "@/lib/constants";
-import { Badge } from "@/components/ui/badge";
-import Recursive from "./recursive";
-import { Trash } from "lucide-react";
+'use client'
+import { Badge } from '@/components/ui/badge'
+import { EditorBtns, defaultStyles } from '@/lib/constants'
+import { EditorElement, useEditor } from '@/providers/editor/editor-provider'
+import clsx from 'clsx'
+import React from 'react'
+import { v4 } from 'uuid'
+import Recursive from './recursive'
+import { Trash } from 'lucide-react'
 
-type Props = {
-  element: EditorElement;
-}
+type Props = { element: EditorElement }
 
-const Container: React.FC<Props> = ({ element }) => {
-  const { id, content, name, styles, type } = element;
-  const { dispatch, state } = useEditor();
+const Container = ({ element }: Props) => {
+  const { id, content, name, styles, type } = element
+  const { dispatch, state } = useEditor()
 
   const handleOnDrop = (e: React.DragEvent, type: string) => {
-    e.stopPropagation();
+    e.stopPropagation()
     const componentType = e.dataTransfer.getData('componentType') as EditorBtns
+
     switch (componentType) {
-      case "text":
+      case 'text':
         dispatch({
-          type: "ADD_ELEMENT",
+          type: 'ADD_ELEMENT',
           payload: {
             containerId: id,
             elementDetails: {
-              content: { innerText: "Text Element" },
+              content: { innerText: 'Text Element' },
               id: v4(),
-              name: "Text",
+              name: 'Text',
               styles: {
                 color: 'black',
                 ...defaultStyles,
               },
               type: 'text',
-            }
-          }
+            },
+          },
         });
         break;
-
+      case 'link':
+        dispatch({
+          type: 'ADD_ELEMENT',
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: {
+                innerText: 'Link Element',
+                href: '#',
+              },
+              id: v4(),
+              name: 'Link',
+              styles: {
+                color: 'black',
+                ...defaultStyles,
+              },
+              type: 'link',
+            },
+          },
+        })
+        break
+      case 'video':
+        dispatch({
+          type: 'ADD_ELEMENT',
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: {
+                src: 'https://www.youtube.com/embed/A3l6YYkXzzg?si=zbcCeWcpq7Cwf8W1',
+              },
+              id: v4(),
+              name: 'Video',
+              styles: {},
+              type: 'video',
+            },
+          },
+        })
+        break
       case 'container':
+        // if a container element is dropped
+        const containerId = e.dataTransfer.getData('containerId');
+        const findElementById = (elements: EditorElement[], cid: string): EditorElement | null => {
+          for (const item of elements) {
+            if (item.id === cid) {
+              return item;
+            }
+            if (Array.isArray(item.content)) {
+              const res = findElementById(item.content, cid);
+              if (res) return res;
+            }
+          }
+          return null;
+        }
+        //Duplicate elements
+        const generateNewContent = (elements: EditorElement): EditorElement => {
+          if (Array.isArray(elements.content)) {
+            return {
+                ...elements,
+                id: v4(),
+                content: elements.content.map((ele) => generateNewContent(ele))
+              }
+          } else {
+            return {
+              ...elements,
+              id: v4(),
+            }
+          }
+        }
+        const containerElement = findElementById(state.editor.elements, containerId);
+        const newContainerElement = containerElement ? generateNewContent(containerElement) : null;
+        dispatch({
+          type: 'ADD_ELEMENT',
+          payload: {
+            containerId: id,
+            elementDetails: newContainerElement || {
+              content: [],
+              id: v4(),
+              name: 'Container',
+              styles: { ...defaultStyles },
+              type: 'container',
+            },
+          },
+        })
+        break
+      case 'contactForm':
         dispatch({
           type: 'ADD_ELEMENT',
           payload: {
@@ -47,15 +129,58 @@ const Container: React.FC<Props> = ({ element }) => {
             elementDetails: {
               content: [],
               id: v4(),
-              name: "Container",
-              styles: { ...defaultStyles },
-              type: 'container',
-            }
-          }
-        });
-        break;
-
-      default: return;
+              name: 'Contact Form',
+              styles: {},
+              type: 'contactForm',
+            },
+          },
+        })
+        break
+      case 'paymentForm':
+        dispatch({
+          type: 'ADD_ELEMENT',
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: [],
+              id: v4(),
+              name: 'Contact Form',
+              styles: {},
+              type: 'paymentForm',
+            },
+          },
+        })
+        break
+      case '2Col':
+        dispatch({
+          type: 'ADD_ELEMENT',
+          payload: {
+            containerId: id,
+            elementDetails: {
+              content: [
+                {
+                  content: [],
+                  id: v4(),
+                  name: 'Container',
+                  styles: { ...defaultStyles, width: '100%' },
+                  type: 'container',
+                },
+                {
+                  content: [],
+                  id: v4(),
+                  name: 'Container',
+                  styles: { ...defaultStyles, width: '100%' },
+                  type: 'container',
+                },
+              ],
+              id: v4(),
+              name: 'Two Columns',
+              styles: { ...defaultStyles, display: 'flex' },
+              type: '2Col',
+            },
+          },
+        })
+        break
     }
   }
 
@@ -63,29 +188,30 @@ const Container: React.FC<Props> = ({ element }) => {
     e.preventDefault();
   }
 
-  const handleDragStart = (e: React.DragEvent, type: string) => {
-    if (type === "__body") return;
-    e.dataTransfer.setData("componentType", type);
+  const handleDragStart = (e: React.DragEvent, type: string, cid: string) => {
+    if (type === '__body') return
+    e.dataTransfer.setData('componentType', type);
+    console.log(cid)
+    e.dataTransfer.setData('containerId', cid);
   }
 
   const handleOnClickBody = (e: React.MouseEvent) => {
-    e.stopPropagation();
+    e.stopPropagation()
     dispatch({
-      type: "CHANGE_CLICKED_ELEMENT",
-      payload: {
-        elementDetails: element
-      },
-    });
-  }
-
-  const handleDeleteElement = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    dispatch({
-      type: "DELETE_ELEMENT",
+      type: 'CHANGE_CLICKED_ELEMENT',
       payload: {
         elementDetails: element,
       },
-    });
+    })
+  }
+
+  const handleDeleteElement = () => {
+    dispatch({
+      type: 'DELETE_ELEMENT',
+      payload: {
+        elementDetails: element,
+      },
+    })
   }
 
   return (
@@ -112,18 +238,20 @@ const Container: React.FC<Props> = ({ element }) => {
       onDrop={(e) => handleOnDrop(e, id)}
       onDragOver={handleDragOver}
       draggable={type !== '__body'}
-      onDragStart={e => handleDragStart(e, 'container')}
       onClick={handleOnClickBody}
+      onDragStart={(e) => handleDragStart(e, type!, id)}
     >
       <Badge
         className={clsx(
-          "absolute -top-[23px] -left-[1px] rounded-none rounded-t-lg hidden",
+          'absolute -top-[23px] -left-[1px] rounded-none rounded-t-lg hidden',
           {
-            block: state.editor.selectedElement.id === element.id && !state.editor.liveMode
+            block:
+              state.editor.selectedElement.id === element.id &&
+              !state.editor.liveMode,
           }
         )}
       >
-        {name}
+        {element.name}
       </Badge>
 
       {Array.isArray(content) &&
@@ -148,4 +276,4 @@ const Container: React.FC<Props> = ({ element }) => {
   )
 }
 
-export default Container
+export default Container;

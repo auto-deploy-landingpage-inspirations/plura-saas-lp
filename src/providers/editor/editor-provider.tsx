@@ -11,7 +11,7 @@ export type EditorElement = {
   styles: React.CSSProperties;
   name: string;
   type: EditorBtns;
-  content: | EditorElement[] | { href?: string; innerText?: string; };
+  content: | EditorElement[] | { href?: string; innerText?: string; src?: string; };
 }
 
 export type Editor = {
@@ -137,7 +137,7 @@ const editorReducer = (
     case "ADD_ELEMENT":
       const updatedEditorState = {
         ...state.editor,
-        element: addAnElement(state.editor.elements, action),
+        elements: addAnElement(state.editor.elements, action),
       };
       const updatedHistory = [
         ...state.history.history.slice(0, state.history.currentIndex + 1),

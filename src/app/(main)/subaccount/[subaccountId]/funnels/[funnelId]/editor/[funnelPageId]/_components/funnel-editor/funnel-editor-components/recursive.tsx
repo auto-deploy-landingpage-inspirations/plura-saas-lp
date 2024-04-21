@@ -12,6 +12,7 @@ const Recursive: React.FC<Props> = ({ element }) => {
     case "text": 
       return <TextComponent element={element} />;
     case "__body":
+    case "container":
       return <Container element={element} />;
     default: 
       return null;
