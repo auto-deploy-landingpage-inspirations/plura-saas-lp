@@ -82,7 +82,7 @@ const UploadMediaForm: React.FC<Props> = ({ subaccountId }) => {
                   <FormLabel>File Name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Your agency name"
+                      placeholder="Your File Name"
                       {...field}
                     />
                   </FormControl>

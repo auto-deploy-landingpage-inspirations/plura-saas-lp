@@ -10,7 +10,7 @@ type Props = {
 }
 
 const MediaUploadButton: React.FC<Props> = ({ subaccountId }) => {
-  const { isOpen, setOpen, setClose } = useModal();
+  const { setOpen } = useModal();
     return (
       <Button
         onClick={() => setOpen(<CustomModal title="Upload Media" subheading="Upload a file in your media bucket">
