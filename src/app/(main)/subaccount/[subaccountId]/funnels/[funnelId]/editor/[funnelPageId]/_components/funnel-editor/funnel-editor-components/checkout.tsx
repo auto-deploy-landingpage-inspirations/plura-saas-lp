@@ -68,7 +68,6 @@ const Checkout = (props: Props) => {
             }
           )
           const responseJson = await response.json()
-          console.log(responseJson)
           if (!responseJson) throw new Error('something went wrong')
           if (responseJson.error) {
             throw new Error(responseJson.error)
@@ -84,7 +83,8 @@ const Checkout = (props: Props) => {
             title: 'Oppse!',
             //@ts-ignore
             description: error.message,
-          })
+          });
+          console.log(error);
         }
       }
       getClientSercet()
