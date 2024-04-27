@@ -92,7 +92,7 @@ const SubaccountIdPage: React.FC<Props> = async ({ params, searchParams }) => {
       .toFixed(2);
 
     closingRate = +(
-      (totalClosedSessions.length / checkoutSessions.data.length) * 100
+      (totalClosedSessions.length / (checkoutSessions.data.length || 1)) * 100
     ).toFixed(2);
   }
 
