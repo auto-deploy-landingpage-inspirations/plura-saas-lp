@@ -9,7 +9,7 @@ type Props = {
 }
 export default function Navigation({ user }: Props) {
   return (
-    <div className="fixed top-0 right-0 left-0 z-10 px-4 py-1 2xl:py-2 flex items-center justify-between bg-white dark:bg-black">
+    <div className="fixed top-0 right-0 left-0 z-[20] px-4 py-1 2xl:py-2 flex items-center justify-between bg-white dark:bg-black">
       <aside className="flex items-center gap-2">
         <Image src={'/assets/plura-logo.svg'} alt="Plura Logo" width={40} height={40} />
         <span className="text-xl font-bold">
